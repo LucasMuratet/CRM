@@ -1,6 +1,10 @@
 package fr.isen.projet.crm.resources;
 
 import fr.isen.projet.crm.implementations.TicketServiceImpl;
+import fr.isen.projet.crm.interfaces.models.enums.PRIORITY;
+import fr.isen.projet.crm.interfaces.models.enums.REQUEST_TYPE;
+import fr.isen.projet.crm.interfaces.models.enums.SOURCE;
+import fr.isen.projet.crm.interfaces.models.enums.STATUS;
 import fr.isen.projet.crm.interfaces.services.TicketService;
 import fr.isen.projet.crm.interfaces.models.TicketClientModel;
 import jakarta.ws.rs.*;
@@ -24,17 +28,15 @@ public class TicketResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public List<TicketClientModel> getAllTickets() {
-        return new ArrayList<>(this.ticketService.getTickets());
+        return new ArrayList<>(this.ticketService.getAllTickets());
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TicketClientModel getTicketById(@jakarta.ws.rs.PathParam("id") String id) {
+    public TicketClientModel getTicketById(@PathParam("id") String id) {
         return this.ticketService.getTicketById(id);
     }
-
-
 
     @POST
     public TicketClientModel addTicket(TicketClientModel ticketModel) {
@@ -43,12 +45,41 @@ public class TicketResource {
 
     @DELETE
     @Path("/{id}")
-    public void deleteTicket(@jakarta.ws.rs.PathParam("id") int id) {
+    public void deleteTicket(@PathParam("id") String id) {
         this.ticketService.deleteTicket(id);
     }
 
     @PUT
     public TicketClientModel modifyTicket(TicketClientModel ticketModel) {
         return this.ticketService.modifyTicket(ticketModel);
+    }
+
+    @PUT
+    @Path("/status/{id}")
+    public TicketClientModel modifyStatus(@PathParam("id") String id, STATUS status) {
+        return this.ticketService.modifyStatus(id, status);
+    }
+
+    @GET
+    @Path("/user/{userId}/all")
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<TicketClientModel> getAllTicketsByUserId(@PathParam("userId") String userId) {
+        return new ArrayList<>(this.ticketService.getAllTicketsByUserId(userId));
+    }
+
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TicketClientModel> searchTickets(
+            @QueryParam("status") STATUS status,
+            @QueryParam("priority") PRIORITY priority,
+            @QueryParam("source") SOURCE source,
+            @QueryParam("requestType") REQUEST_TYPE requestType,
+            @QueryParam("title") String title,
+            @QueryParam("description") String description,
+            @QueryParam("dateCreatedAfter") String dateCreatedAfter,
+            @QueryParam("dateCreatedBefore") String dateCreatedBefore
+    ) {
+        return this.ticketService.searchTickets(status, priority, source, requestType, title, description, dateCreatedAfter, dateCreatedBefore);
     }
 }

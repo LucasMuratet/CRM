@@ -13,12 +13,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fr.isen.projet.crm.utils.TicketUtil.parseIsoDateToTimestamp;
+
 public class TicketServiceImpl implements TicketService {
 
     AgroalDataSource dataSource = CDI.current().select(AgroalDataSource.class).get();
 
     @Override
-    public List<TicketClientModel> getTickets() {
+    public List<TicketClientModel> getAllTickets() {
         List<TicketClientModel> tickets = new ArrayList<>();
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -59,6 +61,37 @@ public class TicketServiceImpl implements TicketService {
             }
         }
 
+        return tickets;
+    }
+
+    @Override
+    public List<TicketClientModel> getAllTicketsByUserId(String id) {
+        List<TicketClientModel> tickets = new ArrayList<>();
+        String sql = "SELECT * FROM tickets WHERE uuid_client = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    TicketClientModel ticket = new TicketClientModel(
+                            rs.getString("uuid_ticket"),
+                            rs.getString("uuid_client"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getString("comments"),
+                            rs.getDate("date_created"),
+                            rs.getDate("date_update"),
+                            STATUS.valueOf(rs.getString("status")),
+                            PRIORITY.valueOf(rs.getString("priority")),
+                            REQUEST_TYPE.valueOf(rs.getString("request_type")),
+                            SOURCE.valueOf(rs.getString("source"))
+                    );
+                    tickets.add(ticket);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving tickets for user ID: " + id, e);
+        }
         return tickets;
     }
 
@@ -130,7 +163,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void deleteTicket(int id) {
+    public void deleteTicket(String id) {
         Connection conn = null;
         try {
             conn = dataSource.getConnection();
@@ -188,4 +221,117 @@ public class TicketServiceImpl implements TicketService {
         }
         return ticketModel;
     }
+
+    @Override
+    public TicketClientModel modifyStatus(String id, STATUS status) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = dataSource.getConnection();
+
+            String sql = "UPDATE tickets SET status = ? WHERE uuid_ticket = ?";
+            stmt = conn.prepareStatement(sql);
+
+            // Set parameters
+            stmt.setString(1, status.toString());
+            stmt.setString(2, id);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new RuntimeException("Ticket with ID " + id + " not found.");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error modifying status for ticket with ID " + id, e);
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error closing resources", e);
+            }
+        }
+        return getTicketById(id);
+    }
+
+    @Override
+    public List<TicketClientModel> searchTickets(
+            STATUS status,
+            PRIORITY priority,
+            SOURCE source,
+            REQUEST_TYPE requestType,
+            String title,
+            String description,
+            String dateCreatedAfter,
+            String dateCreatedBefore
+    ) {
+        List<TicketClientModel> tickets = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM tickets WHERE 1=1");
+        List<Object> parameters = new ArrayList<>();
+
+        if (status != null) {
+            sql.append(" AND status = ?");
+            parameters.add(status.toString());
+        }
+        if (priority != null) {
+            sql.append(" AND priority = ?");
+            parameters.add(priority.toString());
+        }
+        if (source != null) {
+            sql.append(" AND source = ?");
+            parameters.add(source.toString());
+        }
+        if (requestType != null) {
+            sql.append(" AND request_type = ?");
+            parameters.add(requestType.toString());
+        }
+        if (title != null && !title.isEmpty()) {
+            sql.append(" AND LOWER(title) LIKE ?");
+            parameters.add("%" + title.toLowerCase() + "%");
+        }
+        if (description != null && !description.isEmpty()) {
+            sql.append(" AND LOWER(description) LIKE ?");
+            parameters.add("%" + description.toLowerCase() + "%");
+        }
+        if (dateCreatedAfter != null && !dateCreatedAfter.isEmpty()) {
+            sql.append(" AND date_created >= ?");
+            parameters.add(parseIsoDateToTimestamp(dateCreatedAfter));
+        }
+        if (dateCreatedBefore != null && !dateCreatedBefore.isEmpty()) {
+            sql.append(" AND date_created <= ?");
+            parameters.add(parseIsoDateToTimestamp(dateCreatedBefore));
+        }
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    TicketClientModel ticket = new TicketClientModel(
+                            rs.getString("uuid_ticket"),
+                            rs.getString("uuid_client"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getString("comments"),
+                            rs.getTimestamp("date_created"),
+                            rs.getTimestamp("date_update"),
+                            STATUS.valueOf(rs.getString("status")),
+                            PRIORITY.valueOf(rs.getString("priority")),
+                            REQUEST_TYPE.valueOf(rs.getString("request_type")),
+                            SOURCE.valueOf(rs.getString("source"))
+                    );
+                    tickets.add(ticket);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching tickets", e);
+        }
+
+        return tickets;
+    }
+
 }
