@@ -1,0 +1,554 @@
+{
+	"info": {
+		"_postman_id": "461db4ee-db39-453f-a725-76f682d4bb5c",
+		"name": "WebDev CRM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40893727"
+	},
+	"item": [
+		{
+			"name": "Ticket",
+			"item": [
+				{
+					"name": "getAllTickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/ticket",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTicketById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/ticket/0bd2f8d2-3a94-4fd1-9825-84a597ae8a36",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket",
+								"0bd2f8d2-3a94-4fd1-9825-84a597ae8a36"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addTicket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid_client\": \"d856132f-b881-48d1-8659-4863fa9b7151\",\n  \"title\": \"Ajout ticket fin\",\n  \"description\": \"Erreur sur la page de facturation.\",\n  \"comments\": \"À vérifier rapidement.\",\n  \"date_created\": \"2025-01-07T14:00:00\",\n  \"date_update\": null,\n  \"status\": \"UNSTARTED\",\n  \"priority\": \"NORMAL\",\n  \"request_type\": \"SUPPORT\",\n  \"source\": \"WEB_FORM\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/ticket",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyTicket",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid_ticket\": \"0bd2f8d2-3a94-4fd1-9825-84a597ae8333\",\n  \"uuid_client\": \"d856132f-b881-48d1-8659-4863fa9b7151\",\n  \"title\": \"Modif ticket\",\n  \"description\": \"Erreur sur la page de facturation.\",\n  \"comments\": \"À vérifier vraiment rapidement.\",\n  \"date_created\": \"2025-01-07T14:00:00\",\n  \"date_update\": null,\n  \"status\": \"UNSTARTED\",\n  \"priority\": \"NORMAL\",\n  \"request_type\": \"SUPPORT\",\n  \"source\": \"WEB_FORM\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/ticket",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyStatus",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"ENDED\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/ticket/status/0bd2f8d2-3a94-4fd1-9825-84a597ae8a36",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket",
+								"status",
+								"0bd2f8d2-3a94-4fd1-9825-84a597ae8a36"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllTicketsByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/ticket/user/d856192e-b881-48d1-8659-4863fa9b7151/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket",
+								"user",
+								"d856192e-b881-48d1-8659-4863fa9b7151",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchTickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/ticket/search?status=IN_PROGRESS&priority=HIGH",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket",
+								"search"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "IN_PROGRESS"
+								},
+								{
+									"key": "priority",
+									"value": "HIGH"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteTicket",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"uuid_ticket\": \"0937ce1e-a435-4f6a-bad9-cb9cf70367ce\",\n        \"uuid_client\": \"3ace598e-5a43-4921-b11f-89b76ec2eb89\",\n        \"title\": \"Feature Request: Advanced Analytics\",\n        \"description\": \"Users are facing login issues after resetting their passwords.\",\n        \"comments\": \"Tried.\",\n        \"date_created\": \"2025-01-06T23:00:00\",\n        \"status\": \"CANCELLED\",\n        \"priority\": \"LOW\",\n        \"request_type\": \"BUG_REPORT\",\n        \"source\": \"PHONE\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/ticket/0937ce1e-a435-4f6a-bad9-cb9cf70367ce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket",
+								"0937ce1e-a435-4f6a-bad9-cb9cf70367ce"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TicketAction",
+			"item": [
+				{
+					"name": "getAllActions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/action",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"action"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getActionById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/action/0576394b-b813-4644-982c-0e08e9a3d792",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"action",
+								"0576394b-b813-4644-982c-0e08e9a3d792"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addAction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"ticket\": \"971f1a80-8540-46bb-9760-5d7bcae2fd81\",\n        \"date_action\": \"2025-01-06\",\n        \"action_type\": \"UPDATE\",\n        \"description\": \"Ticket assigned to another team member.\",\n        \"uuid_user\": \"ca46107a-e113-41e2-a523-0dac4a6d8aee\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/action",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"action"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyAction",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\n        \"uuid_action\": \"05b550eb-adbb-4df5-9504-3fbd0a8dcf96\",\n        \"ticket\": \"c3cdec0d-20a3-4dc9-bdd5-0a1254b201ea\",\n        \"date_action\": \"2025-01-06\",\n        \"action_type\": \"UPDATE\",\n        \"description\": \"Mise à jour de la description de l'action.\",\n        \"uuid_user\": \"4f8682d5-f44a-468b-8b83-78b6416c4f2b\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/action",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"action"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllActionsByTicketId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/action/ticket/971f1a80-8540-46bb-9760-5d7bcae2fd81",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"action",
+								"ticket",
+								"971f1a80-8540-46bb-9760-5d7bcae2fd81"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteAction",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/action/11b24bd1-7df5-4a2e-82e6-0186385e958c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"action",
+								"11b24bd1-7df5-4a2e-82e6-0186385e958c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TicketTask",
+			"item": [
+				{
+					"name": "getAllTasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/task",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"task"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTaskById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/task/823fa032-e4d1-44a0-a1dc-3245b6fb2479",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"task",
+								"823fa032-e4d1-44a0-a1dc-3245b6fb2479"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addTask",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n        \"ticket\": \"d4596123-df99-4553-a708-ddea7ad2cacd\",\n        \"date_reminder\": \"2025-01-06\",\n        \"description\": \"Prepare a root cause analysis report for the incident.\",\n        \"uuid_user\": \"517516e7-4e8a-4765-91d5-ec87012e227d\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/task",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"task"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyTask",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uuid_task\": \"c4fc581f-cc7a-41dd-b633-8fb91c9c73bd\",\n    \"ticket\": \"d4596123-df99-4553-a708-ddea7ad2cacd\",\n    \"date_reminder\": \"2025-01-09\",\n    \"description\": \"modify task test\",\n    \"uuid_user\": \"517516e7-4e8a-4765-91d5-ec87012e227d\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/task",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"task"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllTasksByTicketId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/task/ticket/5f76c225-d1f0-444d-a01a-d8acc80ed1a3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"task",
+								"ticket",
+								"5f76c225-d1f0-444d-a01a-d8acc80ed1a3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteTask",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/task/38eddfc8-3717-4470-99c4-827578dce464",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"task",
+								"38eddfc8-3717-4470-99c4-827578dce464"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TicketAggregation",
+			"item": [
+				{
+					"name": "getAggregatedTicketById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/ticket-aggregation/236d279e-7ce7-4bd8-a0c9-c25f657d1d75",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket-aggregation",
+								"236d279e-7ce7-4bd8-a0c9-c25f657d1d75"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAggregatedTicketsByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/ticket-aggregation/user/be140b14-7481-4b7e-8e50-75e5741d115b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"ticket-aggregation",
+								"user",
+								"be140b14-7481-4b7e-8e50-75e5741d115b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
