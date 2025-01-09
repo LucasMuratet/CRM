@@ -13,7 +13,6 @@ public class StatusResource {
 
     private final StatusService statusService;
 
-
     public StatusResource() {
         this.statusService = new StatusServiceImpl();
     }
