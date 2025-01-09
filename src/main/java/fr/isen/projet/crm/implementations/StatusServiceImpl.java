@@ -40,28 +40,22 @@ public class StatusServiceImpl implements StatusService {
     public Map<String, Long> getTableCounts() throws SQLException {
         Map<String, Long> tableCounts = new HashMap<>();
 
+        String[] myTables = {"tickets", "ticket_actions", "ticket_tasks"};
+
         try (Connection connection = dataSource.getConnection()) {
-            // Récupérer la liste des tables
-            try (PreparedStatement tableStatement = connection.prepareStatement("SHOW TABLES");
-                 ResultSet tables = tableStatement.executeQuery()) {
+            for (String tableName : myTables) {
+                try (PreparedStatement countStatement = connection.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "`");
+                     ResultSet countResult = countStatement.executeQuery()) {
 
-                while (tables.next()) {
-                    String tableName = tables.getString(1);
-
-                    // Effectuer un COUNT() pour chaque table
-                    try (PreparedStatement countStatement = connection.prepareStatement("SELECT COUNT(*) FROM `" + tableName + "`");
-                         ResultSet countResult = countStatement.executeQuery()) {
-
-                        if (countResult.next()) {
-                            tableCounts.put(tableName, countResult.getLong(1));
-                        }
-                    } catch (SQLException e) {
-                        System.err.println("Error during the count of the table " + tableName + ": " + e.getMessage());
+                    if (countResult.next()) {
+                        tableCounts.put(tableName, countResult.getLong(1));
                     }
+                } catch (SQLException e) {
+                    System.err.println("Erreur lors du comptage de la table " + tableName + ": " + e.getMessage());
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error during the connexion or execution of the request : " + e.getMessage());
+            System.err.println("Erreur lors de la connexion ou de l'exécution de la requête : " + e.getMessage());
             throw e;
         }
 
