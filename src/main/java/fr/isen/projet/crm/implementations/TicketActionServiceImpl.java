@@ -10,6 +10,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.UUID;
+
 public class TicketActionServiceImpl implements TicketActionService {
 
     AgroalDataSource dataSource = CDI.current().select(AgroalDataSource.class).get();
@@ -83,26 +85,39 @@ public class TicketActionServiceImpl implements TicketActionService {
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving action with ID: " + id, e);
         }
-        return null; // Aucun résultat trouvé
+        return null;
     }
 
-    @Override
     public TicketActionModel addAction(TicketActionModel actionModel) {
+        String uuid_action = UUID.randomUUID().toString();
+
         String sql = "INSERT INTO ticket_actions (uuid_action, ticket, date_action, action_type, description, uuid_user) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, actionModel.uuid_action());
+
+            stmt.setString(1, uuid_action);
             stmt.setString(2, actionModel.ticket());
             stmt.setDate(3, new java.sql.Date(actionModel.date_action().getTime()));
             stmt.setString(4, actionModel.action_type().toString());
             stmt.setString(5, actionModel.description());
             stmt.setString(6, actionModel.uuid_user());
+
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("Error adding action", e);
         }
-        return actionModel;
+
+        return new TicketActionModel(
+                uuid_action,
+                actionModel.ticket(),
+                actionModel.date_action(),
+                actionModel.action_type(),
+                actionModel.description(),
+                actionModel.uuid_user()
+        );
     }
 
     @Override
