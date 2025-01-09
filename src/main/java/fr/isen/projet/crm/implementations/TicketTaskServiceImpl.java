@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.UUID;
+
 public class TicketTaskServiceImpl implements TicketTaskService {
 
     AgroalDataSource dataSource = CDI.current().select(AgroalDataSource.class).get();
@@ -79,16 +81,17 @@ public class TicketTaskServiceImpl implements TicketTaskService {
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving task with ID: " + id, e);
         }
-        return null; // Aucun résultat trouvé
+        return null;
     }
 
     @Override
     public TicketTaskModel addTask(TicketTaskModel taskModel) {
+        String uuid_task = UUID.randomUUID().toString();
         String sql = "INSERT INTO ticket_tasks (uuid_task, ticket, date_reminder, description, uuid_user) "
                 + "VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, taskModel.uuid_task());
+            stmt.setString(1, uuid_task);
             stmt.setString(2, taskModel.ticket());
             stmt.setDate(3, new java.sql.Date(taskModel.date_reminder().getTime()));
             stmt.setString(4, taskModel.description());
@@ -97,7 +100,13 @@ public class TicketTaskServiceImpl implements TicketTaskService {
         } catch (SQLException e) {
             throw new RuntimeException("Error adding task", e);
         }
-        return taskModel;
+        return new TicketTaskModel(
+                uuid_task,
+                taskModel.ticket(),
+                taskModel.date_reminder(),
+                taskModel.description(),
+                taskModel.uuid_user()
+        );
     }
 
     @Override
