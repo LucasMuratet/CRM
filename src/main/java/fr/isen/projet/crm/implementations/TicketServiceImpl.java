@@ -12,6 +12,8 @@ import jakarta.enterprise.inject.spi.CDI;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 
 import static fr.isen.projet.crm.utils.TicketUtil.parseIsoDateToTimestamp;
 
@@ -121,22 +123,23 @@ public class TicketServiceImpl implements TicketService {
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving ticket with ID: " + id, e);
         }
-        return null; // Aucun ticket trouvé
+        return null;
     }
 
-    @Override
     public TicketClientModel addTicket(TicketClientModel ticketModel) {
         Connection conn = null;
         PreparedStatement stmt = null;
         try {
             conn = dataSource.getConnection();
 
+            String uuid_ticket = UUID.randomUUID().toString();
+
             String sql = "INSERT INTO tickets (uuid_ticket, uuid_client, title, description, date_created, date_update, status, priority, request_type, comments, source) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             stmt = conn.prepareStatement(sql);
 
             // Set parameters
-            stmt.setString(1, ticketModel.uuid_ticket());
+            stmt.setString(1, uuid_ticket);
             stmt.setString(2, ticketModel.uuid_client());
             stmt.setString(3, ticketModel.title());
             stmt.setString(4, ticketModel.description());
@@ -149,6 +152,20 @@ public class TicketServiceImpl implements TicketService {
             stmt.setString(11, ticketModel.source().toString());
 
             stmt.executeUpdate();
+
+            return new TicketClientModel(
+                    uuid_ticket,
+                    ticketModel.uuid_client(),
+                    ticketModel.title(),
+                    ticketModel.description(),
+                    ticketModel.comments(),
+                    ticketModel.date_created(),
+                    ticketModel.date_update(),
+                    ticketModel.status(),
+                    ticketModel.priority(),
+                    ticketModel.request_type(),
+                    ticketModel.source()
+            );
         } catch (SQLException e) {
             throw new RuntimeException("Error adding ticket", e);
         } finally {
@@ -159,7 +176,6 @@ public class TicketServiceImpl implements TicketService {
                 throw new RuntimeException("Error closing resources", e);
             }
         }
-        return ticketModel;
     }
 
     @Override
